@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "email": "user1@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "lead",
+    "last_engaged": "2026-10-01"
+  },
+  {
+    "id": "2",
+    "email": "user2@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "lead",
+    "last_engaged": "2025-09-01"
+  },
+  {
+    "id": "3",
+    "email": "user3@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "lead"
+  },
+  {
+    "id": "4",
+    "email": "user4@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "lead",
+    "unsubscribed": true,
+    "last_engaged": "2026-10-10"
+  },
+  {
+    "id": "5",
+    "email": "user5@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "customer"
+  },
+  {
+    "id": "6",
+    "email": "user6@example.com",
+    "marketing_status": "marketing",
+    "lifecycle": "lead",
+    "last_engaged": "2024-01-01",
+    "open_deal": true
+  },
+  {
+    "id": "7",
+    "email": "user7@example.com",
+    "marketing_status": "non-marketing",
+    "lifecycle": "lead"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Onboarding: new member",
+    "enabled": true,
+    "description": "Welcome sequence",
+    "last_enrolled_at": "2026-10-27"
+  },
+  {
+    "id": 2,
+    "name": "Copy of Onboarding: new member",
+    "enabled": true,
+    "last_enrolled_at": "2026-01-02"
+  },
+  {
+    "id": 3,
+    "name": "Renewal reminder",
+    "enabled": true,
+    "description": "30-day reminder",
+    "last_enrolled_at": "2026-10-20"
+  },
+  {
+    "id": 4,
+    "name": "renewal reminder",
+    "enabled": false,
+    "description": "old",
+    "last_enrolled_at": "2025-01-01"
+  }
+]

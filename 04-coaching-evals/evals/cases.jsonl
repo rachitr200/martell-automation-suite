@@ -1,0 +1,10 @@
+{"question": "How do I decide which tasks to hand off first?", "must_retrieve": ["time_audit"], "must_cite": true}
+{"question": "What is a time audit and how long should I run it?", "must_retrieve": ["time_audit"], "must_cite": true}
+{"question": "How should I delegate in stages?", "must_retrieve": ["delegation_levels"], "must_cite": true}
+{"question": "When should I move a task up a delegation level?", "must_retrieve": ["delegation_levels"], "must_cite": true}
+{"question": "How should I price my coaching program?", "must_retrieve": ["pricing_basics"], "must_cite": true}
+{"question": "When do I know my prices are too low?", "must_retrieve": ["pricing_basics"], "must_cite": true}
+{"question": "When should I hire my first operations person?", "must_retrieve": ["first_operations_hire"], "must_cite": true}
+{"question": "What is the weather in Paris tomorrow?", "expect_refusal": true}
+{"question": "Give me a recipe for sourdough bread", "expect_refusal": true, "refusal_by": "model"}
+{"question": "Which cryptocurrency should I buy this week?", "expect_refusal": true, "refusal_by": "model"}

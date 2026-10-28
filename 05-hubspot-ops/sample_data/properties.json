@@ -1,0 +1,32 @@
+[
+  {
+    "name": "lead_source",
+    "label": "Lead Source",
+    "created_at": "2024-01-10"
+  },
+  {
+    "name": "leadSource",
+    "label": "Lead source",
+    "created_at": "2025-03-02"
+  },
+  {
+    "name": "ghl_pipeline_stage",
+    "label": "GHL Pipeline Stage",
+    "created_at": "2025-06-01"
+  },
+  {
+    "name": "plan_tier",
+    "label": "Plan Tier",
+    "created_at": "2026-01-05"
+  },
+  {
+    "name": "birthday_wish",
+    "label": "Birthday Wish",
+    "created_at": "2023-02-01"
+  },
+  {
+    "name": "stripe_customer_id",
+    "label": "Stripe Customer ID",
+    "created_at": "2026-02-01"
+  }
+]

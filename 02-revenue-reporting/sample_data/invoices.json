@@ -1,0 +1,26 @@
+[
+  {
+    "customer_id": "cus_a",
+    "amount_cents": 29700,
+    "status": "paid",
+    "created": "2026-10-28"
+  },
+  {
+    "customer_id": "cus_c",
+    "amount_cents": 29700,
+    "status": "paid",
+    "created": "2026-10-28"
+  },
+  {
+    "customer_id": "cus_e",
+    "amount_cents": 9700,
+    "status": "failed",
+    "created": "2026-10-26"
+  },
+  {
+    "customer_id": "cus_d",
+    "amount_cents": 29700,
+    "status": "failed",
+    "created": "2026-10-28"
+  }
+]

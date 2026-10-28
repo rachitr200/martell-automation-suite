@@ -1,0 +1,48 @@
+[
+  {
+    "customer_id": "cus_a",
+    "plan": "pro",
+    "amount_cents": 29700,
+    "interval": "month",
+    "status": "active",
+    "started_at": "2026-06-01",
+    "current_period_end": "2026-11-01"
+  },
+  {
+    "customer_id": "cus_b",
+    "plan": "annual",
+    "amount_cents": 240000,
+    "interval": "year",
+    "status": "active",
+    "started_at": "2026-01-10",
+    "current_period_end": "2026-11-05",
+    "cancel_at_period_end": true
+  },
+  {
+    "customer_id": "cus_c",
+    "plan": "pro",
+    "amount_cents": 29700,
+    "interval": "month",
+    "status": "active",
+    "started_at": "2026-10-28",
+    "current_period_end": "2026-11-28"
+  },
+  {
+    "customer_id": "cus_d",
+    "plan": "pro",
+    "amount_cents": 29700,
+    "interval": "month",
+    "status": "canceled",
+    "started_at": "2026-03-01",
+    "canceled_at": "2026-10-28"
+  },
+  {
+    "customer_id": "cus_e",
+    "plan": "basic",
+    "amount_cents": 9700,
+    "interval": "month",
+    "status": "past_due",
+    "started_at": "2026-08-15",
+    "current_period_end": "2026-11-10"
+  }
+]

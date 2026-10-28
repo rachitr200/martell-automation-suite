@@ -1,0 +1,184 @@
+[
+  {
+    "id": "w1",
+    "outcome": "won",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "Interested, but it feels expensive for us."
+      },
+      {
+        "role": "rep",
+        "text": "Totally fair. Most members recoup the cost within a quarter, can I show you how a similar team did it?"
+      },
+      {
+        "role": "prospect",
+        "text": "Sure."
+      },
+      {
+        "role": "rep",
+        "text": "Great, let's book a quick call and I'll walk you through the numbers."
+      }
+    ]
+  },
+  {
+    "id": "w2",
+    "outcome": "won",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "What's the price for the yearly plan? Budget is tight."
+      },
+      {
+        "role": "rep",
+        "text": "Totally fair. Most members recoup the cost within a quarter, want to see how they did it?"
+      },
+      {
+        "role": "prospect",
+        "text": "Yes please."
+      },
+      {
+        "role": "rep",
+        "text": "Perfect, let's book a quick call this week."
+      }
+    ]
+  },
+  {
+    "id": "w3",
+    "outcome": "won",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "I need to think about it and talk to my partner."
+      },
+      {
+        "role": "rep",
+        "text": "Of course. What would you need to see to feel confident? I can send a short case study you can share."
+      },
+      {
+        "role": "prospect",
+        "text": "That would help."
+      },
+      {
+        "role": "rep",
+        "text": "Sent. Happy to book a quick call with both of you."
+      }
+    ]
+  },
+  {
+    "id": "w4",
+    "outcome": "won",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "Not now, we're too busy this month."
+      },
+      {
+        "role": "rep",
+        "text": "Understood. What would make next month a better time? I can hold a spot for you."
+      },
+      {
+        "role": "prospect",
+        "text": "Early next month."
+      },
+      {
+        "role": "rep",
+        "text": "Booked, I'll book a quick call for the 3rd."
+      }
+    ]
+  },
+  {
+    "id": "w5",
+    "outcome": "won",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "We already use another tool for this."
+      },
+      {
+        "role": "rep",
+        "text": "Good to know. What do you like most about it, and what's missing? That helps me see if we're a fit."
+      },
+      {
+        "role": "prospect",
+        "text": "It lacks coaching."
+      },
+      {
+        "role": "rep",
+        "text": "That's exactly where we help. Let's book a quick call."
+      }
+    ]
+  },
+  {
+    "id": "l1",
+    "outcome": "lost",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "This looks expensive."
+      },
+      {
+        "role": "rep",
+        "text": "Our pricing is fixed, there is no discount."
+      },
+      {
+        "role": "prospect",
+        "text": "Ok, I'll pass."
+      }
+    ]
+  },
+  {
+    "id": "l2",
+    "outcome": "lost",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "I need to think about it."
+      },
+      {
+        "role": "rep",
+        "text": "Sure, let me know."
+      },
+      {
+        "role": "prospect",
+        "text": "Will do."
+      },
+      {
+        "role": "rep",
+        "text": "Just checking in again, any update?"
+      }
+    ]
+  },
+  {
+    "id": "l3",
+    "outcome": "lost",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "Not now, too busy."
+      },
+      {
+        "role": "rep",
+        "text": "No problem, reach out when ready."
+      }
+    ]
+  },
+  {
+    "id": "l4",
+    "outcome": "lost",
+    "messages": [
+      {
+        "role": "prospect",
+        "text": "We already use something else."
+      },
+      {
+        "role": "rep",
+        "text": "Ok, our product is better though."
+      },
+      {
+        "role": "prospect",
+        "text": "Not interested."
+      }
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+{"id": "c01", "label": "purchase_intent", "messages": [{"role": "customer", "text": "Sign me up for the annual plan, how do I pay?"}, {"role": "rep", "text": "Great, I'll send the link."}]}
+{"id": "c02", "label": "purchase_intent", "messages": [{"role": "customer", "text": "I'm ready to start today. What's the next step?"}, {"role": "rep", "text": "Let's get you onboarded."}]}
+{"id": "c03", "label": "purchase_intent", "messages": [{"role": "customer", "text": "Can I book a call with the team this week?"}, {"role": "rep", "text": "Absolutely, here's my calendar."}]}
+{"id": "c04", "label": "purchase_intent", "messages": [{"role": "customer", "text": "This looks like what we need. How do I join the program?"}, {"role": "rep", "text": "Here is the signup page."}]}
+{"id": "c05", "label": "pricing_objection", "messages": [{"role": "customer", "text": "Honestly it's too expensive for us right now."}, {"role": "rep", "text": "I understand, let's look at options."}]}
+{"id": "c06", "label": "pricing_objection", "messages": [{"role": "customer", "text": "Our budget is tight this quarter, is there a cheaper tier?"}, {"role": "rep", "text": "We have a starter plan."}]}
+{"id": "c07", "label": "pricing_objection", "messages": [{"role": "customer", "text": "The cost is hard to justify for a team of two."}, {"role": "rep", "text": "Let me share ROI examples."}]}
+{"id": "c08", "label": "pricing_objection", "messages": [{"role": "customer", "text": "Do you offer a discount if we pay yearly?"}, {"role": "rep", "text": "Yes, two months free."}]}
+{"id": "c09", "label": "support_issue", "messages": [{"role": "customer", "text": "I can't log in to the community since yesterday."}, {"role": "rep", "text": "Sorry about that, resetting access."}]}
+{"id": "c10", "label": "support_issue", "messages": [{"role": "customer", "text": "I was charged twice this month."}, {"role": "rep", "text": "I'll check the invoices now."}]}
+{"id": "c11", "label": "support_issue", "messages": [{"role": "customer", "text": "The video player is not working on my phone."}, {"role": "rep", "text": "Which device are you on?"}]}
+{"id": "c12", "label": "support_issue", "messages": [{"role": "customer", "text": "I'm locked out after changing my email."}, {"role": "rep", "text": "Let me fix the account link."}]}
+{"id": "c13", "label": "churn_risk", "messages": [{"role": "customer", "text": "I think I'm going to cancel after this month."}, {"role": "rep", "text": "Can I ask what changed?"}]}
+{"id": "c14", "label": "churn_risk", "messages": [{"role": "customer", "text": "Haven't had time to use it. Can I pause my membership?"}, {"role": "rep", "text": "We can pause for 30 days."}]}
+{"id": "c15", "label": "churn_risk", "messages": [{"role": "customer", "text": "I'm not using the content anymore, want a refund."}, {"role": "rep", "text": "Let me look at your options."}]}
+{"id": "c16", "label": "churn_risk", "messages": [{"role": "customer", "text": "A friend recommended another tool, I might switch to it."}, {"role": "rep", "text": "Happy to hear what it does better."}]}
+{"id": "c17", "label": "general_question", "messages": [{"role": "customer", "text": "What topics does the Tuesday workshop cover?"}, {"role": "rep", "text": "Hiring, delegation and pricing."}]}
+{"id": "c18", "label": "general_question", "messages": [{"role": "customer", "text": "Is the book included in the membership?"}, {"role": "rep", "text": "Yes, a digital copy."}]}
+{"id": "c19", "label": "general_question", "messages": [{"role": "customer", "text": "Where can I find the replay of last week's event?"}, {"role": "rep", "text": "In the Events tab."}]}
+{"id": "c20", "label": "general_question", "messages": [{"role": "customer", "text": "Who runs the weekly Q&A sessions?"}, {"role": "rep", "text": "The coaching team."}]}
+{"id": "c21", "label": "pricing_objection", "messages": [{"role": "customer", "text": "Is it worth it at that rate? I'm weighing it against my other commitments."}, {"role": "rep", "text": "Many members see ROI in 90 days."}]}
+{"id": "c22", "label": "churn_risk", "messages": [{"role": "customer", "text": "Between us, I'm not sure this is for me anymore."}, {"role": "rep", "text": "Thanks for being honest."}]}
+{"id": "c23", "label": "support_issue", "messages": [{"role": "customer", "text": "Nothing loads when I open the app, just a blank screen."}, {"role": "rep", "text": "Can you try updating it?"}]}
+{"id": "c24", "label": "purchase_intent", "messages": [{"role": "customer", "text": "Who do I talk to about getting my whole team in?"}, {"role": "rep", "text": "I'll connect you with sales."}]}
