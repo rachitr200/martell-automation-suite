@@ -223,3 +223,40 @@ def test_recovery_scheduler_waits_backs_off_and_removes_completed_jobs(env):
     with sessions() as s:assert s.get(RecoveryJob,'evt_worker') is None
     assert tick(sessions,lock,retry,now=500)==0 and len(calls)==3
     engine.dispose()
+
+
+
+def test_live_auto_tool_choice_and_text_only_followup(env,monkeypatch):
+    import platform_copilot
+    monkeypatch.setenv('ANTHROPIC_API_KEY','fake-test-key')
+    monkeypatch.setenv('ANTHROPIC_MODEL','claude-sonnet-5-5')
+    calls=[]
+    def provider(*args,**kwargs):
+        body=kwargs['json'];assert body['tool_choice']=={'type':'auto'}
+        calls.append(len(body['messages']))
+        content=[{'type':'text','text':'I will inspect the records.'}] if len(calls)==1 else [{'type':'tool_use','id':'finish','name':'finish_analysis','input':{'summary':'No retry needed','action':'none','event_id':None,'evidence_ids':[]}}]
+        class Response:
+            is_error=False
+            def json(self):return {'content':content,'usage':{'input_tokens':10,'output_tokens':5}}
+        return Response()
+    monkeypatch.setattr(platform_copilot.httpx,'post',provider)
+    with make_client(env) as c:
+        sign_in(c);r=investigate(c,'cus_a','claude')
+        assert r.status_code==200,r.text
+        assert r.json()['status']=='completed' and r.json()['input_tokens']==20
+        assert calls==[1,3]
+
+
+def test_provider_billing_error_is_actionable_without_raw_details(env,monkeypatch):
+    import platform_copilot
+    monkeypatch.setenv('ANTHROPIC_API_KEY','fake-test-key')
+    monkeypatch.setenv('ANTHROPIC_MODEL','claude-sonnet-5-5')
+    class Response:
+        is_error=True
+        status_code=400
+        def json(self):return {'error':{'message':'Your credit balance is too low. private-provider-data'}}
+    monkeypatch.setattr(platform_copilot.httpx,'post',lambda *a,**kw:Response())
+    with make_client(env) as c:
+        sign_in(c);r=investigate(c,'cus_a','claude')
+        assert r.status_code==502 and 'credits and billing' in r.text
+        assert 'private-provider-data' not in r.text
