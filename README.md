@@ -1,11 +1,28 @@
 # Martell Automation Suite
 
-Eight small, working projects, one per area of the **AI Automation Developer** job description at
+Eight focused projects plus a connected visual dashboard, covering each area of the **AI Automation Developer** job description at
 Martell Group. Each is built so you can explain *what it is for, which tools it uses, and why*.
 
 > Portfolio work, not production work. Nothing here has served real customers, and external
 > APIs (Stripe, HubSpot, Anthropic, the community platform) were exercised through fakes, not live
 > accounts. Say so plainly when you present it. See "What is verified" below.
+
+## Visual dashboard — start here
+
+The suite now includes a full **frontend connected to a FastAPI backend** in [`09-dashboard`](09-dashboard/README.md).
+
+```bash
+# Python 3.12+, from this repository's root
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r 09-dashboard/requirements.txt
+python run_dashboard.py
+```
+
+Open **http://127.0.0.1:8000**. The dashboard has customer search and timelines, event payload inspection,
+access status, failure/retry simulations, revenue charts and four offline AI tools. No API keys required.
+All data is synthetic; the app is a local portfolio demonstration. See the dashboard README for a
+five-minute walkthrough, Windows activation, test commands and deployment boundaries.
 
 ## Job description -> project
 
@@ -58,7 +75,13 @@ Documents: `docs/INTERVIEW_GUIDE.md` (how to explain each project), `docs/COMPAN
 An independent local review on October 28, 2026 ran the full supplied pytest suite:
 **102 tests passed**, including the lifecycle service and local copilot HTTP round trip.
 These tests use fake external integrations and do not establish production capacity.
-The lifecycle module's Ruff check reported 39 findings; lint cleanup remains open.
+The original lifecycle module's Ruff check reported 39 findings; lint cleanup remains open.
+
+The complete pytest suite now passes **108 tests** (102 existing + 6 dashboard integration tests).
+The dashboard tests cover local UI assets, state changes, recovery, revenue, offline AI tools,
+request validation, cross-origin protection, reset and persistence. A DOM interaction smoke check
+also exercised all six views, simulation/retry and all four tools against the running backend.
+A pixel-level browser layout review has not been performed.
 
 ## Production-readiness priorities
 
