@@ -1,0 +1,16 @@
+# One HTTPS service serves the frontend and Python API.
+# Free instance: demo data reseeds on restart.
+services:
+  - type: web
+    name: martell-operations-demo
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r 09-dashboard/requirements.txt
+    startCommand: uvicorn dashboard:app --app-dir 09-dashboard --host 0.0.0.0 --port $PORT --workers 1 --proxy-headers --forwarded-allow-ips '*'
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.13
+      - key: PYTHONUNBUFFERED
+        value: "1"

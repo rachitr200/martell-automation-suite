@@ -61,6 +61,7 @@ function renderAI() {
 }
 function render() {
   if(!state)return;
+  if(state.hosted) $('#demo-notice-text').textContent='Shared portfolio demo. All customers and integrations are simulated; visitors share this dataset. Sample data may reset on restarts. No real charges or messages are sent.';
   const [title,desc]=titles[page];$('#page-title').textContent=title;$('#page-description').textContent=desc;$('#crumb').textContent=page==='ai'?'AI workspace':page==='access'?'Access & recovery':page[0].toUpperCase()+page.slice(1);
   document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false');});
   $('#failed-count').textContent=state.events.filter(e=>e.status==='failed').length||'';

@@ -104,3 +104,18 @@ def test_data_survives_restart(tmp_path):
         c.post('/api/simulate', json={'scenario':'checkout'}, headers=HEADERS)
     with client_for(tmp_path) as c:
         assert len(c.get('/api/dashboard').json()['customers']) == 7
+
+
+def test_hosted_https_origin_and_host_validation(tmp_path, monkeypatch):
+    monkeypatch.setenv('RENDER_EXTERNAL_HOSTNAME', 'demo.example.onrender.com')
+    application = module.create_app(f'sqlite:///{tmp_path / "hosted.db"}')
+    with TestClient(application, base_url='https://demo.example.onrender.com') as c:
+        assert c.get('/').status_code == 200
+        assert c.get('/api/health').json()['hosted'] is True
+        assert c.get('/api/dashboard').json()['hosted'] is True
+        response = c.post('/api/simulate', json={'scenario':'checkout'},
+                          headers={**HEADERS, 'Origin':'https://demo.example.onrender.com'})
+        assert response.status_code == 200
+        assert c.post('/api/reset', json={'confirm':True},
+                      headers={**HEADERS, 'Origin':'https://evil.example'}).status_code == 403
+        assert c.get('/api/health', headers={'Host':'evil.example'}).status_code == 400

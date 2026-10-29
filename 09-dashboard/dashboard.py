@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import threading
 import uuid
@@ -97,7 +98,9 @@ class ResetInput(BaseModel):
 
 def create_app(database_url: str | None = None):
     # Separate from lifecycle production settings: no .env, credentials or real adapters.
-    db_path = Path(__file__).parent / "demo.db"
+    data_dir = Path(os.environ.get("DEMO_DATA_DIR", str(Path(__file__).parent)))
+    data_dir.mkdir(parents=True, exist_ok=True)
+    db_path = data_dir / "demo.db"
     engine = create_engine(database_url or f"sqlite:///{db_path}",
                            connect_args={"check_same_thread": False})
     sessions = sessionmaker(engine, expire_on_commit=False)
@@ -150,7 +153,11 @@ def create_app(database_url: str | None = None):
 
     app = FastAPI(title="Martell Operations Demo", lifespan=lifespan)
     app.state.engine = engine
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "testserver"])
+    hosted_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
+    allowed_hosts = ["localhost", "127.0.0.1", "testserver"]
+    if hosted_hostname:
+        allowed_hosts.append(hosted_hostname)
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
     @app.middleware("http")
     async def protect_demo(request: Request, call_next):
@@ -159,7 +166,7 @@ def create_app(database_url: str | None = None):
             origin = request.headers.get("origin")
             expected = f"{request.url.scheme}://{request.headers.get('host')}"
             if request.headers.get("x-demo-action") != "1" or (origin and origin != expected):
-                return JSONResponse({"detail": "Use the local dashboard to perform demo actions."}, status_code=403)
+                return JSONResponse({"detail": "Use this dashboard to perform demo actions."}, status_code=403)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
@@ -170,7 +177,8 @@ def create_app(database_url: str | None = None):
 
     @app.get("/api/health")
     def health():
-        return {"status": "ok", "mode": "synthetic_demo", "live_integrations": False}
+        return {"status": "ok", "mode": "synthetic_demo", "live_integrations": False,
+                "hosted": bool(hosted_hostname)}
 
     def event_json(event):
         obj = event.payload["data"]["object"]
@@ -215,6 +223,7 @@ def create_app(database_url: str | None = None):
             drift = reconcile({c["id"]: c for c in rows},
                               {cid: {"subscription_status": c.status, "subscription_plan": c.plan} for cid,c in contacts.items()}, set(members))
             return {"mode": "synthetic_demo", "currency": "USD", "customers": rows,
+                    "hosted": bool(hosted_hostname),
                     "events": [event_json(e) for e in events], "revenue": report, "chart": chart,
                     "issues": [asdict(d) for d in drift], "updated_at": datetime.now(timezone.utc).isoformat()}
 

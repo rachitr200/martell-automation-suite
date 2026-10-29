@@ -24,6 +24,13 @@ access status, failure/retry simulations, revenue charts and four offline AI too
 All data is synthetic; the app is a local portfolio demonstration. See the dashboard README for a
 five-minute walkthrough, Windows activation, test commands and deployment boundaries.
 
+## Publish the visual demo
+
+[Deploy frontend + Python API on Render](https://render.com/deploy?repo=https://github.com/rachitr200/martell-automation-suite).
+The root `render.yaml` configures one Free web service serving both the interface and `/api`.
+[Deployment guide](09-dashboard/DEPLOY.md). Free hosting uses ephemeral sample data that reseeds on restart.
+This is deployment configuration: an account owner must start the service in Render before a live URL exists.
+
 ## Job description -> project
 
 | JD responsibility | Project | Core tools |

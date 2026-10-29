@@ -43,7 +43,7 @@ The simulation endpoint feeds synthetic events directly to the processor; it doe
 
 AI tools are explicitly offline: the coach extracts retrieved notes using the existing stub; no generative model runs. The classifier is the existing keyword baseline. The separate Anthropic adapters remain available in their original modules.
 
-This is local-only demo software, not a production admin portal. It binds to loopback, restricts hosts, blocks cross-origin writes, and uses a dedicated demo DB. It has no user login or production authentication. Do not expose it with real customer data. It does not inherit `.env` credentials or call live integrations. Use one server worker: a process-local lock serializes demonstration mutations. The 2,000-event limit keeps the in-memory dashboard calculations bounded. Existing production-readiness issues documented in the root README remain open.
+By default this runs locally. Optional public deployment is documented in [DEPLOY.md](DEPLOY.md); it remains a synthetic portfolio demo, not a production admin portal. The local launcher binds to loopback; Render uses its assigned public port. Both restrict hosts, block cross-origin writes, and use a dedicated demo DB. It has no user login or production authentication. Do not expose it with real customer data. It does not inherit `.env` credentials or call live integrations. Use one server worker: a process-local lock serializes demonstration mutations. The 2,000-event limit keeps the in-memory dashboard calculations bounded. Existing production-readiness issues documented in the root README remain open.
 
 ## Test
 
@@ -53,3 +53,7 @@ python -m pytest -q
 ```
 
 The new tests exercise signup/failure/retry/cancellation, status changes, revenue, offline AI tools, cross-origin protection, reset, static assets and database persistence. They need pytest fixtures, so the suite's dependency-free runner skips them.
+
+## Publish
+
+See [DEPLOY.md](DEPLOY.md) to publish the existing Python backend and frontend together on Render. The browser already uses same-origin `/api` calls. No frontend API URL needs to be changed.
