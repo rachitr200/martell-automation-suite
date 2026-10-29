@@ -1,15 +1,21 @@
 # Martell Automation Suite
 
-Eight focused projects plus a connected visual dashboard, covering each area of the **AI Automation Developer** job description at
+Eight focused projects plus a connected visual dashboard, demonstrating selected areas of the **AI Automation Developer** job description at
 Martell Group. Each is built so you can explain *what it is for, which tools it uses, and why*.
 
-> Portfolio work, not production work. Nothing here has served real customers, and external
-> APIs (Stripe, HubSpot, Anthropic, the community platform) were exercised through fakes, not live
-> accounts. Say so plainly when you present it. See "What is verified" below.
+> Deployed portfolio demonstration using synthetic customer data; it has not served real customers.
+> The Render dashboard has completed a live Anthropic Claude investigation and produced a retry
+> proposal awaiting administrator approval. This does not verify execution of that proposal or
+> live Stripe, HubSpot, community-access, Slack, or Anthropic Batch integrations.
+> See "What is verified" below.
 
 ## Visual dashboard — start here
 
-The suite now includes a full **frontend connected to a FastAPI backend** in [`09-dashboard`](09-dashboard/README.md).
+**Hosted demo:** [Martell Operations Demo](https://martell-operations-demo.onrender.com).
+
+The interface and API are served by the same Render service. The commands below run it locally.
+
+The suite includes a full **frontend connected to a FastAPI backend** in [`09-dashboard`](09-dashboard/README.md).
 
 ```bash
 # Python 3.12+, from this repository's root
@@ -20,16 +26,19 @@ python run_dashboard.py
 ```
 
 Open **http://127.0.0.1:8000**. The dashboard has customer search and timelines, event payload inspection,
-access status, failure/retry simulations, revenue charts and four offline AI tools. No API keys required.
-All data is synthetic; the app is a local portfolio demonstration. See the dashboard README for a
+access status, failure/retry simulations, revenue charts and four offline AI tools. The offline demo requires no API keys.
+Authenticated live Claude investigations require server-side Anthropic configuration; never put API keys in frontend code.
+All customer data is synthetic; the portfolio demonstration is available locally and on Render. See the dashboard README for a
 five-minute walkthrough, Windows activation, test commands and deployment boundaries.
 
-## Publish the visual demo
+## Hosting and deployment
 
 [Deploy frontend + Python API on Render](https://render.com/deploy?repo=https://github.com/rachitr200/martell-automation-suite).
 The root `render.yaml` configures one Free web service serving both the interface and `/api`.
 [Deployment guide](09-dashboard/DEPLOY.md). Free hosting uses ephemeral sample data that reseeds on restart.
-This is deployment configuration: an account owner must start the service in Render before a live URL exists.
+The hosted demo above has already been deployed. This deployment link is for creating your own instance.
+SQLite data and checkpoints on ephemeral hosting may be lost on redeploy; configure PostgreSQL for durable storage.
+A repository update does not establish that the hosted service has deployed that commit.
 
 ## Job description -> project
 
@@ -45,7 +54,7 @@ This is deployment configuration: an account owner must start the service in Ren
 | Multiply the team's leverage; prevent the next question | `08-team-leverage` + `CLAUDE.md` + `.claude/commands/` | Claude Code slash commands, request-log ranking |
 
 **Not built** (be upfront): donation/renewal page backends, Vimeo/Zoom/Telegram integrations,
-Zapier/Relay.app workflows, MySQL, an actual cloud deployment, and live Twilio sending.
+Zapier/Relay.app workflows, MySQL, a GCP deployment, and live Twilio sending.
 The webhook + idempotent-handler pattern in project 01 is the template you would reuse for the
 video/event integrations.
 
@@ -70,9 +79,10 @@ PYTHONPATH=02-revenue-reporting/src python -m revenue_report.cli \
 
 | Project | Verified here | Not verified here |
 | --- | --- | --- |
-| 01 | FastAPI webhook tests, SQLite model behaviour, event processing, signatures, fake integration clients, reconciliation and tracing | Live Stripe/HubSpot/access APIs, PostgreSQL concurrency, migration execution and cloud deployment |
-| 02 to 06, 08 | All logic and CLIs, through `run_tests.py` | Live calls to Slack and Anthropic |
+| 01 | FastAPI webhook tests, SQLite model behaviour, event processing, signatures, fake integration clients, reconciliation and tracing | Live Stripe/HubSpot/access APIs, PostgreSQL concurrency and standalone lifecycle-service deployment |
+| 02 to 06, 08 | All logic and CLIs, through `run_tests.py` | Live Slack delivery, Anthropic Batch processing and live coaching-quality evaluation |
 | 07 | Pattern mining, suggestions, a real local HTTP round trip; extension JS syntax and its thread-reading logic against a fake DOM | The extension inside Chrome, and against the real CRM page (selectors are placeholders) |
+| 09 | Render-hosted frontend/API; successful live Claude investigation with tool trace, token usage and an approval-pending retry proposal; local approval/recovery and evaluation tests | Execution of that observed live proposal, real customer outcomes, end-to-end external integrations and production capacity |
 
 Documents: `docs/INTERVIEW_GUIDE.md` (how to explain each project), `docs/COMPANY_ANALYSIS.md`
 (what the company does and where you could add value).
@@ -84,22 +94,27 @@ An independent local review on October 28, 2026 ran the full supplied pytest sui
 These tests use fake external integrations and do not establish production capacity.
 The original lifecycle module's Ruff check reported 39 findings; lint cleanup remains open.
 
-The complete pytest suite now passes **108 tests** (102 existing + 6 dashboard integration tests).
+The initial dashboard update passed **108 tests** (102 existing + 6 dashboard integration tests).
 The dashboard tests cover local UI assets, state changes, recovery, revenue, offline AI tools,
 request validation, cross-origin protection, reset and persistence. A DOM interaction smoke check
 also exercised all six views, simulation/retry and all four tools against the running backend.
 A pixel-level browser layout review has not been performed.
 
+The latest recorded local validation for the operations-platform update passed **132 tests**, plus frontend
+smoke checks for approval, evaluation and outcome screens. Recovered source also passed Python compilation
+and JavaScript syntax checks. These are local results, not a claim of CI success or live-model accuracy.
+The seven copilot regression cases run without model calls or external actions.
+See [capabilities and evidence](09-dashboard/CAPABILITIES.md) for implementation boundaries.
+
 ## Production-readiness priorities
 
-- Recover events left in `received` if a process stops after persistence but before processing.
-- Handle invoice-before-checkout delivery without losing customer email or access provisioning.
-- Resolve equal-timestamp event conflicts using authoritative subscription state.
-- Add durable workers, scheduled retries with backoff, concurrent-processing protection and alerts.
+- Configure durable PostgreSQL hosting and verify backups, restores and concurrent processing.
+- Extend the existing received-event recovery and retry/backoff logic with durable distributed workers and alerts.
+- Verify lifecycle ordering and reconciliation against authoritative provider state.
 - Replace the generic access API and placeholder CRM selectors with verified integrations.
 - Run live-model evaluations and expand the small evaluation datasets.
-- Add load tests, deployment monitoring and a verified cloud deployment.
-- For this suite as a single repository, place CI in the root `.github/workflows` directory and configure module working directories. The supplied workflow currently lives inside project 01.
+- Add load tests, deployment monitoring and verified sandbox integration runs.
+- Verify CI results and the deployed commit separately from local test results.
 
 ## Project status
 
