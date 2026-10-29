@@ -106,3 +106,7 @@ A pixel-level browser layout review has not been performed.
 Independent portfolio prototype inspired by the published Martell Group role.
 Not affiliated with, endorsed by, or deployed for Martell Group.
 Sample data and demonstration coaching material are used throughout.
+
+## Operations platform
+
+See [platform setup](09-dashboard/PLATFORM_SETUP.md) for authentication, Claude investigations, durable approvals, knowledge search, MCP, n8n, sandbox connectors and persistence limits.

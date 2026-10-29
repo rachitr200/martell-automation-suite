@@ -1,0 +1,12 @@
+[
+ {"id":"churn-1","text":"I want to cancel my membership","label":"churn_risk"},
+ {"id":"churn-2","text":"Please pause my membership","label":"churn_risk"},
+ {"id":"support-1","text":"I cannot log into the portal","label":"support_issue"},
+ {"id":"support-2","text":"My account is locked out","label":"support_issue"},
+ {"id":"price-1","text":"This is too expensive","label":"pricing_objection"},
+ {"id":"price-2","text":"Can I have a discount","label":"pricing_objection"},
+ {"id":"purchase-1","text":"I am ready to join","label":"purchase_intent"},
+ {"id":"purchase-2","text":"Sign me up today","label":"purchase_intent"},
+ {"id":"general-1","text":"Where is the community calendar","label":"general_question"},
+ {"id":"general-2","text":"Who leads the weekly session","label":"general_question"}
+]

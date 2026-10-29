@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Literal
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(ROOT / "01-lifecycle-engine"))
 for source in ROOT.glob("[0-9][0-9]-*/src"):
     sys.path.insert(0, str(source))
@@ -21,7 +22,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from sqlalchemy import String, create_engine, func, select
+from sqlalchemy import String, create_engine, delete, func, select
 from sqlalchemy.orm import Mapped, mapped_column, sessionmaker
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
@@ -37,6 +38,8 @@ from coaching_ai.kb import Index, load_dir
 from copilot_api.patterns import build_playbook
 from copilot_api.suggest import suggest_reply
 from revenue_report.metrics import compute_daily_report
+from platform_api import install_platform
+from platform_security import bearer, configured, require_role
 
 STATIC = Path(__file__).parent / "static"
 PRICES = {"basic": 9700, "pro": 29700, "annual": 240000}
@@ -101,8 +104,12 @@ def create_app(database_url: str | None = None):
     data_dir = Path(os.environ.get("DEMO_DATA_DIR", str(Path(__file__).parent)))
     data_dir.mkdir(parents=True, exist_ok=True)
     db_path = data_dir / "demo.db"
-    engine = create_engine(database_url or f"sqlite:///{db_path}",
-                           connect_args={"check_same_thread": False})
+    url = database_url or os.getenv("DATABASE_URL") or f"sqlite:///{db_path}"
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+    engine = create_engine(url, pool_pre_ping=True, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {})
     sessions = sessionmaker(engine, expire_on_commit=False)
     lock = threading.RLock()  # single-process demo; not a distributed worker lock
     index = Index(load_dir(ROOT / "04-coaching-evals/knowledge"))
@@ -146,9 +153,17 @@ def create_app(database_url: str | None = None):
 
     @asynccontextmanager
     async def lifespan(app):
-        Base.metadata.create_all(engine)
-        seed()
-        yield
+        from alembic import command
+        from alembic.config import Config
+        config = Config(str(Path(__file__).parent / "alembic.ini"))
+        config.set_main_option("script_location", str(Path(__file__).parent / "migrations"))
+        config.attributes["engine"] = engine
+        config.attributes["metadata"] = Base.metadata
+        with lock:
+            command.upgrade(config, "head")
+            seed()
+        async with platform_lifecycle():
+            yield
         engine.dispose()
 
     app = FastAPI(title="Martell Operations Demo", lifespan=lifespan)
@@ -162,11 +177,20 @@ def create_app(database_url: str | None = None):
     @app.middleware("http")
     async def protect_demo(request: Request, call_next):
         # Require a non-simple header on mutations; don't allow cross-origin writes.
-        if request.method == "POST":
+        path = request.url.path
+        if path.startswith("/mcp") and not bearer(request, "MCP_READ_TOKEN"):
+            return JSONResponse({"detail":"Read-only MCP token required"}, status_code=401, headers={"WWW-Authenticate":"Bearer"})
+        external_transport = path.startswith("/mcp") or path == "/api/connectors/stripe/webhook" or (path.startswith("/api/automation/") and bearer(request,"AUTOMATION_TOKEN"))
+        if request.method == "POST" and not external_transport:
             origin = request.headers.get("origin")
             expected = f"{request.url.scheme}://{request.headers.get('host')}"
             if request.headers.get("x-demo-action") != "1" or (origin and origin != expected):
                 return JSONResponse({"detail": "Use this dashboard to perform demo actions."}, status_code=403)
+        if configured() and request.method == "POST" and (path in ("/api/simulate", "/api/reset") or (path.startswith("/api/events/") and path.endswith("/retry"))):
+            try:
+                require_role(request, sessions, ("admin",) if path == "/api/reset" else ("admin","operator"))
+            except HTTPException as exc:
+                return JSONResponse({"detail":exc.detail}, status_code=exc.status_code)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
@@ -275,8 +299,10 @@ def create_app(database_url: str | None = None):
     @app.post("/api/reset")
     def reset(body: ResetInput):
         with lock:
-            Base.metadata.drop_all(engine)
-            Base.metadata.create_all(engine)
+            with sessions() as session:
+                for model in (DemoMember, DemoContact, Customer, StripeEvent):
+                    session.execute(delete(model))
+                session.commit()
             seed()
         return {"status": "reset"}
 
@@ -301,6 +327,8 @@ def create_app(database_url: str | None = None):
                 "total": sum(not r.skipped for r in results), "skipped": sum(r.skipped for r in results),
                 "cases": [{**asdict(r), "passed": r.passed and not r.skipped} for r in results],
                 "note": "Live-model refusal cases are skipped. This measures retrieval and citation checks, not live-model quality."}
+
+    platform_lifecycle = install_platform(app, sessions, engine, data_dir, lock, dashboard, retry)
 
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
 

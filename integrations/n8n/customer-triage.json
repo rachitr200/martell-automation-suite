@@ -1,0 +1,107 @@
+{
+  "name": "Martell customer triage \u00b7 reviewed output",
+  "active": false,
+  "nodes": [
+    {
+      "id": "incoming",
+      "name": "Authenticated incoming message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "martell-customer-triage",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "classify",
+      "name": "Classify with Python API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://martell-operations-demo.onrender.com/api/automation/classify",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({text: $json.body.text}) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "review",
+      "name": "Return human review item",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "label",
+              "name": "label",
+              "type": "string",
+              "value": "={{ $json.label }}"
+            },
+            {
+              "id": "review",
+              "name": "requires_human_review",
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "id": "next",
+              "name": "next_action",
+              "type": "string",
+              "value": "Review the classification before contacting a customer or updating a CRM."
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Authenticated incoming message": {
+      "main": [
+        [
+          {
+            "node": "Classify with Python API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify with Python API": {
+      "main": [
+        [
+          {
+            "node": "Return human review item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

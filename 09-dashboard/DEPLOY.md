@@ -45,3 +45,7 @@ Persistent sample data is optional: choose a paid instance with an attached disk
 - **Demo data disappears:** expected on Free hosting; see above.
 
 Official references: https://render.com/docs/deploy-fastapi and https://render.com/docs/free
+
+## Operations platform
+
+See [platform setup](PLATFORM_SETUP.md) for authentication, Claude investigations, durable approvals, knowledge search, MCP, n8n, sandbox connectors and persistence limits.

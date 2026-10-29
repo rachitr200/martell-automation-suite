@@ -57,3 +57,7 @@ The new tests exercise signup/failure/retry/cancellation, status changes, revenu
 ## Publish
 
 See [DEPLOY.md](DEPLOY.md) to publish the existing Python backend and frontend together on Render. The browser already uses same-origin `/api` calls. No frontend API URL needs to be changed.
+
+## Operations platform
+
+See [platform setup](PLATFORM_SETUP.md) for authentication, Claude investigations, durable approvals, knowledge search, MCP, n8n, sandbox connectors and persistence limits.

@@ -31,7 +31,7 @@ def _customer_for(session: Session, stripe_customer_id: str | None) -> Customer:
     if not stripe_customer_id:
         raise ValueError("event object has no customer id")
     customer = session.scalar(
-        select(Customer).where(Customer.stripe_customer_id == stripe_customer_id)
+        select(Customer).where(Customer.stripe_customer_id == stripe_customer_id).with_for_update()
     )
     if customer is None:
         customer = Customer(stripe_customer_id=stripe_customer_id, last_event_created=0)
@@ -46,7 +46,11 @@ def _is_stale(customer: Customer, event: StripeEvent) -> bool:
     Stripe does not guarantee delivery order. Strict `<` so two events sharing a timestamp
     are both applied.
     """
-    return event.created < customer.last_event_created
+    return event.created < customer.last_event_created or (
+        event.created == customer.last_event_created
+        and customer.status == CustomerStatus.CANCELED
+        and event.type != "customer.subscription.deleted"
+    )
 
 
 def _mark_applied(customer: Customer, event: StripeEvent) -> None:
@@ -67,11 +71,18 @@ def _sync_crm(customer: Customer, integrations: Integrations) -> None:
 
 def on_checkout_completed(session: Session, event: StripeEvent, integrations: Integrations) -> None:
     obj = _object(event)
+    if obj.get("payment_status") not in (None, "paid", "no_payment_required"):
+        return  # delayed payment is not a paid entitlement
     customer = _customer_for(session, obj.get("customer"))
-    if _is_stale(customer, event):
-        return
-
     email = (obj.get("customer_details") or {}).get("email") or obj.get("customer_email")
+    if _is_stale(customer, event):
+        # Hydrate identity from late checkout without overwriting newer entitlement state.
+        customer.email = email or customer.email
+        customer.plan = customer.plan or (obj.get("metadata") or {}).get("plan") or "member"
+        _sync_crm(customer, integrations)
+        if customer.status == CustomerStatus.ACTIVE and customer.email:
+            integrations.access.grant(email=customer.email, plan=customer.plan)
+        return
     customer.email = email or customer.email
     customer.plan = (obj.get("metadata") or {}).get("plan") or customer.plan or "member"
     customer.status = CustomerStatus.ACTIVE
@@ -110,6 +121,7 @@ def on_subscription_updated(
         return
 
     previous_plan = customer.plan
+    previous_status = customer.status
     new_status = _SUBSCRIPTION_STATUS.get(obj.get("status", ""))
     if new_status is not None:
         customer.status = new_status
@@ -120,7 +132,9 @@ def on_subscription_updated(
 
     _sync_crm(customer, integrations)
     plan_changed = bool(new_plan) and new_plan != previous_plan
-    if plan_changed and customer.status == CustomerStatus.ACTIVE and customer.email:
+    if customer.status == CustomerStatus.CANCELED and customer.email:
+        integrations.access.revoke(email=customer.email)
+    if (plan_changed or previous_status != CustomerStatus.ACTIVE) and customer.status == CustomerStatus.ACTIVE and customer.email:
         integrations.access.grant(email=customer.email, plan=customer.plan)
 
 
@@ -166,9 +180,11 @@ def run_event(
     On failure, everything the handler did to the database is rolled back, then the failure is
     recorded on the event (FAILED to be retried, DEAD once attempts run out).
     """
-    event = session.get(StripeEvent, event_id)
+    event = session.get(StripeEvent, event_id, with_for_update=True)
     if event is None:
         raise LookupError(f"unknown event {event_id}")
+    if event.status in (EventStatus.PROCESSED, EventStatus.IGNORED, EventStatus.DEAD):
+        return event.status
     attempts = event.attempts + 1
 
     try:
@@ -195,7 +211,7 @@ def retry_failed(
     """Re-run FAILED events oldest-first (by Stripe's timestamp). Returns how many were tried."""
     ids = session.scalars(
         select(StripeEvent.id)
-        .where(StripeEvent.status == EventStatus.FAILED)
+        .where(StripeEvent.status.in_([EventStatus.FAILED, EventStatus.RECEIVED]))
         .order_by(StripeEvent.created)
         .limit(limit)
     ).all()

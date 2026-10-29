@@ -15,3 +15,4 @@ jobs:
       - run: python -m pip install -r 09-dashboard/requirements-dev.txt
       - run: python -m pytest -q
       - run: node --check 09-dashboard/static/app.js
+      - run: node --check 09-dashboard/static/platform.js

@@ -1,0 +1,2 @@
+# Community access recovery
+A successful paid signup grants membership and synchronizes the CRM. A failed delivery must be inspected before retry. Only events marked failed or received are eligible for recovery. Retrying a processed event is not allowed. Administrator approval is required for copilot-proposed actions. Payment and access decisions are deterministic backend code. Past-due customers retain access during dunning. Canceled customers lose access. These are demonstration policies, not official Martell policies.
