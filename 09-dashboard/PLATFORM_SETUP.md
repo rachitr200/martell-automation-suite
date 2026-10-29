@@ -37,7 +37,7 @@ Optional pgvector: the database owner runs pgvector.sql before setting PGVECTOR_
 
 STRIPE_TEST_SECRET_KEY must start sk_test_ and is used for a read-only check. STRIPE_TEST_WEBHOOK_SECRET verifies /api/connectors/stripe/webhook. Only signed test-mode events are recorded in a sandbox inbox; they do not change demo entitlements.
 
-HUBSPOT_TEST_TOKEN and HUBSPOT_TEST_ACCOUNT=1 must identify a dedicated test account. Proposals have dry-run previews. An approved write additionally requires ALLOW_EXTERNAL_WRITES=1; leave it unset until reviewed. Connection checks read one contact. Slack has a preview endpoint; dashboard actions do not send messages.
+HUBSPOT_TEST_TOKEN and HUBSPOT_TEST_ACCOUNT=1 must identify a dedicated test account. Proposals have dry-run previews. An approved write additionally requires ALLOW_EXTERNAL_WRITES=1; leave it unset until reviewed. Connection checks read one contact. Before an approved HubSpot sync, create contact properties stripe_customer_id, subscription_plan and subscription_status in the test account. Slack has a preview endpoint; dashboard actions do not send messages.
 
 ## MCP and n8n
 
