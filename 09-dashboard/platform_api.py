@@ -199,6 +199,24 @@ def install_platform(app,sessions,engine,data_dir,lock,snapshot,retry):
                     'p95_duration_ms':durations[min(len(durations)-1,int(len(durations)*.95))] if durations else 0,
                     'estimated_cost_usd':cost,'cost_note':'Estimate uses operator-configured model rates; not a provider invoice.' if cost is not None else 'Set model rates to enable estimates; token usage is still measured.'}
 
+    @router.get('/outcomes')
+    def outcomes(request:Request):
+        require_role(request,sessions)
+        from platform_outcomes import summarize_outcomes
+        with sessions() as s:
+            rows=s.scalars(select(CopilotRun).order_by(CopilotRun.created_at.desc()).limit(1000)).all()
+            return summarize_outcomes(rows,os.getenv('MANUAL_RECOVERY_MINUTES'))
+
+    @router.post('/evaluate-copilot')
+    def evaluate_copilot(request:Request):
+        who=require_role(request,sessions)
+        from platform_evaluation import evaluate_workflow
+        report=evaluate_workflow()
+        with sessions() as s:
+            s.add(EvalResult(id=uuid.uuid4().hex,report=report));s.commit()
+        audit(who['actor'],'evaluate','copilot',{'passed':report['passed'],'total':report['total']})
+        return report
+
     @router.get('/documents')
     def documents(request:Request):
         require_role(request,sessions)
@@ -222,7 +240,7 @@ def install_platform(app,sessions,engine,data_dir,lock,snapshot,retry):
     @router.post('/evaluate')
     def evaluate(request:Request):
         who=require_role(request,sessions)
-        # Offline fixtures exercise tool-selection/recovery proposals, independent of Claude.
+        # Offline classifier fixtures; copilot regressions have their own endpoint.
         from batch_classifier.baseline import classify_text
         cases=json.loads((Path(__file__).parent/'evals/operations.json').read_text())
         results=[]
@@ -331,3 +349,4 @@ def install_platform(app,sessions,engine,data_dir,lock,snapshot,retry):
             workflow.close()
 
     return lifecycle
+

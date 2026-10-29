@@ -260,3 +260,36 @@ def test_provider_billing_error_is_actionable_without_raw_details(env,monkeypatc
         sign_in(c);r=investigate(c,'cus_a','claude')
         assert r.status_code==502 and 'credits and billing' in r.text
         assert 'private-provider-data' not in r.text
+
+
+
+def test_copilot_evaluation_is_isolated_and_outcomes_follow_approval(env):
+    with make_client(env) as c:
+        assert c.get('/api/platform/outcomes').status_code==403
+        assert c.post('/api/platform/evaluate-copilot',json={},headers=HEADERS).status_code==403
+        sign_in(c)
+        before=c.get('/api/dashboard').json()
+        report=c.post('/api/platform/evaluate-copilot',json={},headers=HEADERS).json()
+        assert report['passed']==report['total']==7
+        assert not report['live_model_evaluated'] and report['actions_executed']==0
+        assert c.get('/api/dashboard').json()['events']==before['events']
+        run=investigate(c).json()
+        assert c.get('/api/platform/outcomes').json()['unique_recovered_events']==0
+        assert c.post(f'/api/platform/runs/{run["id"]}/decision',json={'approved':True,'reason':'Approve simulated recovery'},headers=HEADERS).status_code==200
+        outcome=c.get('/api/platform/outcomes').json()
+        assert outcome['unique_recovered_events']==1
+        assert outcome['estimated_manual_work_minutes'] is None
+
+
+def test_outcomes_deduplicate_recoveries_and_label_estimates():
+    from types import SimpleNamespace
+    from platform_outcomes import summarize_outcomes
+    def run(status,event,execution):
+        return SimpleNamespace(status=status,result={'action':'retry_event','event_id':event,'execution':{'status':execution}})
+    runs=[run('completed','one','processed'),run('completed','one','processed'),run('completed','two','stale_proposal'),run('failed','three','failed')]
+    report=summarize_outcomes(runs,'15')
+    assert report['unique_recovered_events']==1
+    assert report['run_failure_rate']==.25
+    assert report['estimated_manual_work_minutes']==15
+    for invalid in ['nan','inf','-1','bad',None]:
+        assert summarize_outcomes(runs,invalid)['estimated_manual_work_minutes'] is None

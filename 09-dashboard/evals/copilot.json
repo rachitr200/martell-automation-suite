@@ -1,0 +1,87 @@
+[
+  {
+    "id": "failed-delivery",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "eval_event",
+        "customer_id": "eval_customer",
+        "status": "failed"
+      }
+    ],
+    "expected_action": "retry_event",
+    "expected_event": "eval_event"
+  },
+  {
+    "id": "received-delivery",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "eval_event",
+        "customer_id": "eval_customer",
+        "status": "received"
+      }
+    ],
+    "expected_action": "retry_event",
+    "expected_event": "eval_event"
+  },
+  {
+    "id": "processed-delivery",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "eval_event",
+        "customer_id": "eval_customer",
+        "status": "processed"
+      }
+    ],
+    "expected_action": "none",
+    "expected_event": null
+  },
+  {
+    "id": "ignored-delivery",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "eval_event",
+        "customer_id": "eval_customer",
+        "status": "ignored"
+      }
+    ],
+    "expected_action": "none",
+    "expected_event": null
+  },
+  {
+    "id": "dead-delivery",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "eval_event",
+        "customer_id": "eval_customer",
+        "status": "dead"
+      }
+    ],
+    "expected_action": "none",
+    "expected_event": null
+  },
+  {
+    "id": "empty-history",
+    "customer_id": "eval_customer",
+    "events": [],
+    "expected_action": "none",
+    "expected_event": null
+  },
+  {
+    "id": "other-customer-isolation",
+    "customer_id": "eval_customer",
+    "events": [
+      {
+        "id": "other_event",
+        "customer_id": "other_customer",
+        "status": "failed"
+      }
+    ],
+    "expected_action": "none",
+    "expected_event": null
+  }
+]
